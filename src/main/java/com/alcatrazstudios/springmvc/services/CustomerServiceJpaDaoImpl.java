@@ -15,25 +15,37 @@ import java.util.List;
  */
 @Service
 @Profile("jpadao")
-public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> implements CustomerService{
+public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> implements CustomerService {
 
     private EntityManagerFactory emf;
 
     @PersistenceUnit
-    public void setEmf(EntityManagerFactory emf){
+    public void setEmf(EntityManagerFactory emf) {
         this.emf = emf;
     }
 
     @Override
     public List<Customer> listAll() {
         EntityManager em = emf.createEntityManager();
-        return em.createQuery("from Customer").getResultList();
+        try {
+            return em.createQuery("from Customer").getResultList();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     @Override
     public Customer getById(Integer id) {
         EntityManager em = emf.createEntityManager();
-        return em.find(Customer.class,id);
+        try {
+            return em.find(Customer.class, id);
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     @Override
@@ -42,6 +54,7 @@ public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> impl
         em.getTransaction().begin();
         Customer savedCustomer = em.merge(customer);
         em.getTransaction().commit();
+        em.close();
         return savedCustomer;
     }
 
@@ -49,8 +62,9 @@ public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> impl
     public void delete(Integer id) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        em.remove(em.find(Customer.class,id));
+        em.remove(em.find(Customer.class, id));
         em.getTransaction().commit();
+        em.close();
     }
 
     @Override
