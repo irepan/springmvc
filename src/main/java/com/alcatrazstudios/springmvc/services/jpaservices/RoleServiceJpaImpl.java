@@ -15,14 +15,21 @@ public class RoleServiceJpaImpl extends AbstractJpaDaoService<Role> implements R
     @Override
     public List<?> listAll() {
         EntityManager em = emf.createEntityManager();
-
-        return em.createQuery("from Role", Role.class).getResultList();
+        try {
+            return em.createQuery("from Role", Role.class).getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public Role getById(Integer id) {
         EntityManager em = emf.createEntityManager();
-        return em.find(Role.class, id);
+        try {
+            return em.find(Role.class, id);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
@@ -30,9 +37,15 @@ public class RoleServiceJpaImpl extends AbstractJpaDaoService<Role> implements R
         EntityManager em = emf.createEntityManager();
 
         em.getTransaction().begin();
-
-        Role saveRole = em.merge(domainObject);
-        em.getTransaction().commit();
+        Role saveRole = null;
+        try {
+            saveRole = em.merge(domainObject);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            em.close();
+        }
 
         return saveRole;
     }
@@ -42,7 +55,11 @@ public class RoleServiceJpaImpl extends AbstractJpaDaoService<Role> implements R
         EntityManager em = emf.createEntityManager();
 
         em.getTransaction().begin();
-        em.remove(em.find(Role.class, id));
-        em.getTransaction().commit();
+        try {
+            em.remove(em.find(Role.class, id));
+            em.getTransaction().commit();
+        } finally {
+            em.close();
+        }
     }
 }
