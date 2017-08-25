@@ -26,7 +26,7 @@ public class User extends AbstractDomainClass {
     private String encryptedPassword;
     private Boolean enabled = true;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="user_role")
     private List<Role> roles = new ArrayList<Role>();
 
