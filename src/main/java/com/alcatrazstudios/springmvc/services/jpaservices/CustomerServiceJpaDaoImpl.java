@@ -1,7 +1,9 @@
-package com.alcatrazstudios.springmvc.services;
+package com.alcatrazstudios.springmvc.services.jpaservices;
 
 import com.alcatrazstudios.springmvc.domain.Customer;
-import com.alcatrazstudios.springmvc.domain.Product;
+import com.alcatrazstudios.springmvc.services.CustomerService;
+import com.alcatrazstudios.springmvc.services.security.EncryptionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -15,33 +17,48 @@ import java.util.List;
  */
 @Service
 @Profile("jpadao")
-public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> implements CustomerService{
+public class CustomerServiceJpaDaoImpl extends AbstractJpaDaoService<Customer> implements CustomerService {
 
-    private EntityManagerFactory emf;
+    private EncryptionService encryptionService;
 
-    @PersistenceUnit
-    public void setEmf(EntityManagerFactory emf){
-        this.emf = emf;
+    @Autowired
+    public void setEncryptionService(EncryptionService encryptionService) {
+        this.encryptionService = encryptionService;
     }
 
     @Override
     public List<Customer> listAll() {
         EntityManager em = emf.createEntityManager();
-        return em.createQuery("from Customer").getResultList();
+        try {
+            return em.createQuery("from Customer").getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public Customer getById(Integer id) {
         EntityManager em = emf.createEntityManager();
-        return em.find(Customer.class,id);
+        try {
+            return em.find(Customer.class, id);
+        } finally {
+            em.close();
+        }
     }
 
     @Override
     public Customer saveOrUpdate(Customer customer) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
+
+        if (customer.getUser() != null && customer.getUser().getPassword() != null) {
+            customer.getUser().setEncryptedPassword(
+                    encryptionService.encryptString(customer.getUser().getPassword()));
+        }
+
         Customer savedCustomer = em.merge(customer);
         em.getTransaction().commit();
+        em.close();
         return savedCustomer;
     }
 
@@ -51,10 +68,7 @@ public class CustomerServiceJpaDaoImpl extends AbstractMapService<Customer> impl
         em.getTransaction().begin();
         em.remove(em.find(Customer.class,id));
         em.getTransaction().commit();
+        em.close();
     }
 
-    @Override
-    protected void loadDomainObjects() {
-
-    }
 }

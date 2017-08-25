@@ -1,6 +1,7 @@
-package com.alcatrazstudios.springmvc.services;
+package com.alcatrazstudios.springmvc.services.mapservices;
 
 import com.alcatrazstudios.springmvc.domain.DomainObject;
+import com.alcatrazstudios.springmvc.services.CRUDService;
 
 import java.util.*;
 

@@ -1,5 +1,6 @@
 package com.alcatrazstudios.springmvc.controllers;
 
+import com.alcatrazstudios.springmvc.domain.Address;
 import com.alcatrazstudios.springmvc.domain.Customer;
 import com.alcatrazstudios.springmvc.services.CustomerService;
 import org.junit.Before;
@@ -108,10 +109,11 @@ public class CustomerControllerTest {
         returnCustomer.setId(id);
         returnCustomer.setFirstName(firstName);
         returnCustomer.setLastName(lastName);
-        returnCustomer.setAddressLine1(addressLine1);
-        returnCustomer.setCity(city);
-        returnCustomer.setState(state);
-        returnCustomer.setZipCode(zipCode);
+        returnCustomer.setShippingAddress(new Address());
+        returnCustomer.getShippingAddress().setAddressLine1(addressLine1);
+        returnCustomer.getShippingAddress().setCity(city);
+        returnCustomer.getShippingAddress().setState(state);
+        returnCustomer.getShippingAddress().setZipCode(zipCode);
         returnCustomer.setEmail(email);
         returnCustomer.setPhoneNumber(phoneNumber);
 
@@ -121,10 +123,10 @@ public class CustomerControllerTest {
                 .param("id", "1")
                 .param("firstName", firstName)
                 .param("lastName", lastName)
-                .param("addressLine1", addressLine1)
-                .param("city", city)
-                .param("state", state)
-                .param("zipCode", zipCode)
+                .param("shippingAddress.addressLine1", addressLine1)
+                .param("shippingAddress.city", city)
+                .param("shippingAddress.state", state)
+                .param("shippingAddress.zipCode", zipCode)
                 .param("email", email)
                 .param("phoneNumber", phoneNumber))
                 .andExpect(status().is3xxRedirection())
@@ -133,10 +135,10 @@ public class CustomerControllerTest {
                 .andExpect(model().attribute("customer", hasProperty("id",is(id))))
                 .andExpect(model().attribute("customer", hasProperty("firstName",is(firstName))))
                 .andExpect(model().attribute("customer", hasProperty("lastName",is(lastName))))
-                .andExpect(model().attribute("customer", hasProperty("addressLine1",is(addressLine1))))
-                .andExpect(model().attribute("customer", hasProperty("city",is(city))))
-                .andExpect(model().attribute("customer", hasProperty("state",is(state))))
-                .andExpect(model().attribute("customer", hasProperty("zipCode",is(zipCode))))
+                .andExpect(model().attribute("customer", hasProperty("shippingAddress",hasProperty("addressLine1",is(addressLine1)))))
+                .andExpect(model().attribute("customer", hasProperty("shippingAddress",hasProperty("city",is(city)))))
+                .andExpect(model().attribute("customer", hasProperty("shippingAddress",hasProperty("state",is(state)))))
+                .andExpect(model().attribute("customer", hasProperty("shippingAddress",hasProperty("zipCode",is(zipCode)))))
                 .andExpect(model().attribute("customer", hasProperty("email",is(email))))
                 .andExpect(model().attribute("customer", hasProperty("phoneNumber",is(phoneNumber))));
 
@@ -146,10 +148,10 @@ public class CustomerControllerTest {
         assertEquals(id, boundCustomer.getValue().getId());
         assertEquals(firstName, boundCustomer.getValue().getFirstName());
         assertEquals(lastName, boundCustomer.getValue().getLastName());
-        assertEquals(addressLine1, boundCustomer.getValue().getAddressLine1());
-        assertEquals(city, boundCustomer.getValue().getCity());
-        assertEquals(state, boundCustomer.getValue().getState());
-        assertEquals(zipCode, boundCustomer.getValue().getZipCode());
+        assertEquals(addressLine1, boundCustomer.getValue().getShippingAddress().getAddressLine1());
+        assertEquals(city, boundCustomer.getValue().getShippingAddress().getCity());
+        assertEquals(state, boundCustomer.getValue().getShippingAddress().getState());
+        assertEquals(zipCode, boundCustomer.getValue().getShippingAddress().getZipCode());
         assertEquals(email, boundCustomer.getValue().getEmail());
         assertEquals(phoneNumber, boundCustomer.getValue().getPhoneNumber());
 

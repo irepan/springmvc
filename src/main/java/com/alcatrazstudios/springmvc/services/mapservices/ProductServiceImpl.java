@@ -1,6 +1,8 @@
-package com.alcatrazstudios.springmvc.services;
+package com.alcatrazstudios.springmvc.services.mapservices;
 
 import com.alcatrazstudios.springmvc.domain.Product;
+import com.alcatrazstudios.springmvc.services.jpaservices.AbstractJpaDaoService;
+import com.alcatrazstudios.springmvc.services.ProductService;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
