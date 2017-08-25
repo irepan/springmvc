@@ -27,7 +27,7 @@ public class User extends AbstractDomainClass {
     private Boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_role")
+    @JoinTable
     private List<Role> roles = new ArrayList<Role>();
 
     public String getUsername() {

@@ -12,7 +12,7 @@ public class Role extends AbstractDomainClass{
     private String role;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name="user_role")
+    @JoinTable
     private List<User> users = new ArrayList<User>();
 
     public String getRole() {
