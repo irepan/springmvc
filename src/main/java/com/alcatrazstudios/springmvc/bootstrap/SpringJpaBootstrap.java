@@ -165,6 +165,7 @@ public class SpringJpaBootstrap implements ApplicationListener<ContextRefreshedE
         customer.getBillingAddress().setZipCode("33101");
         customer.setEmail("micheal@burnnotice.com");
         customer.setPhoneNumber("305.333.0101");
+        customer.setUser(user);
         user.setCustomer(customer);
         userService.saveOrUpdate(user);
 
@@ -182,6 +183,7 @@ public class SpringJpaBootstrap implements ApplicationListener<ContextRefreshedE
         customer.getBillingAddress().setZipCode("33101");
         customer.setEmail("fiona@burnnotice.com");
         customer.setPhoneNumber("305.323.0233");
+        customer.setUser(user);
         user.setCustomer(customer);
         userService.saveOrUpdate(user);
 
@@ -199,6 +201,7 @@ public class SpringJpaBootstrap implements ApplicationListener<ContextRefreshedE
         customer.getBillingAddress().setZipCode("33101");
         customer.setEmail("sam@burnnotice.com");
         customer.setPhoneNumber("305.426.9832");
+        customer.setUser(user);
         user.setCustomer(customer);
         userService.saveOrUpdate(user);
 

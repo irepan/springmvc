@@ -1,9 +1,12 @@
 package com.alcatrazstudios.springmvc.services.mapservices;
 
+import com.alcatrazstudios.springmvc.commands.CustomerForm;
+import com.alcatrazstudios.springmvc.converters.CustomerFormToCustomer;
 import com.alcatrazstudios.springmvc.domain.Address;
 import com.alcatrazstudios.springmvc.domain.Customer;
 import com.alcatrazstudios.springmvc.services.CustomerService;
 import com.alcatrazstudios.springmvc.services.jpaservices.AbstractJpaDaoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,13 @@ import java.util.*;
 @Service
 @Profile("map")
 public class CustomerServiceImpl extends AbstractMapService<Customer> implements CustomerService {
+
+    private CustomerFormToCustomer customerFormToCustomer;
+
+    @Autowired
+    public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
+        this.customerFormToCustomer = customerFormToCustomer;
+    }
 
     @Override
     protected void loadDomainObjects() {
@@ -69,5 +79,18 @@ public class CustomerServiceImpl extends AbstractMapService<Customer> implements
     @Override
     public Customer saveOrUpdate(Customer domainObject) {
         return (Customer) super.saveOrUpdate(domainObject);
+    }
+
+    @Override
+    public Customer saveOrUpdateCustomerForm(CustomerForm customerForm) {
+        Customer newCustomer = customerFormToCustomer.convert(customerForm);
+
+        if(newCustomer.getUser().getId() != null){
+            Customer existingCustomer = getById(newCustomer.getId());
+
+            newCustomer.getUser().setEnabled(existingCustomer.getUser().getEnabled());
+        }
+
+        return saveOrUpdate(newCustomer);
     }
 }
