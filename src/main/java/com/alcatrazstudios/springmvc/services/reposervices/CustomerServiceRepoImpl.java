@@ -54,14 +54,12 @@ public class CustomerServiceRepoImpl implements CustomerService {
 
     @Override
     public Customer saveOrUpdateCustomerForm(CustomerForm customerForm) {
-        Customer newCustomer = customerFormToCustomer.convert(customerForm);
-
-        if(newCustomer.getUser().getId() != null){
-            Customer existingCustomer = getById(newCustomer.getId());
-
-            newCustomer.getUser().setEnabled(existingCustomer.getUser().getEnabled());
+        Customer updatedCustomer = null;
+        if (customerForm.getUserId() != null){
+            updatedCustomer = customerFormToCustomer.convertToDao(getById(customerForm.getCustomerId()), customerForm);
+        } else {
+            updatedCustomer = customerFormToCustomer.convertToDao(customerForm);
         }
-
-        return saveOrUpdate(newCustomer);
+        return saveOrUpdate(updatedCustomer);
     }
 }

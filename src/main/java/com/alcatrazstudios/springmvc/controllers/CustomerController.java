@@ -1,6 +1,7 @@
 package com.alcatrazstudios.springmvc.controllers;
 
 import com.alcatrazstudios.springmvc.commands.CustomerForm;
+import com.alcatrazstudios.springmvc.converters.CustomerFormToCustomer;
 import com.alcatrazstudios.springmvc.domain.Customer;
 import com.alcatrazstudios.springmvc.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class CustomerController {
 
-    CustomerService customerService;
+    private CustomerService customerService;
+    private CustomerFormToCustomer customerFormToCustomer;
+
 
     @Autowired
     public void setCustomerService(CustomerService customerService) {
         this.customerService = customerService;
+    }
+
+    @Autowired
+    public void setCustomerFormToCustomer(CustomerFormToCustomer customerFormToCustomer) {
+        this.customerFormToCustomer = customerFormToCustomer;
     }
 
     @RequestMapping("/customers")
@@ -41,12 +49,6 @@ public class CustomerController {
         return "/customer/customerform";
     }
 
-/*    @RequestMapping(value="/customer",method= RequestMethod.POST)
-    public String saveOrDelete(Customer customer){
-        Customer savedCustomer=customerService.saveOrUpdate(customer);
-        return "redirect:/customer/" + savedCustomer.getId();
-    }
-*/
     @RequestMapping(value="/customer",method = RequestMethod.POST)
     public String saveOrUpdate(CustomerForm customerForm){
 
@@ -57,17 +59,7 @@ public class CustomerController {
     @RequestMapping("/customer/edit/{id}")
     public String editCustomer(@PathVariable Integer id, Model model){
         Customer customer = customerService.getById(id);
-        CustomerForm customerForm = new CustomerForm();
-
-        customerForm.setCustomerId(customer.getId());
-        customerForm.setCustomerVersion(customer.getVersion());
-        customerForm.setEmail(customer.getEmail());
-        customerForm.setFirstName(customer.getFirstName());
-        customerForm.setLastName(customer.getLastName());
-        customerForm.setPhoneNumber(customer.getPhoneNumber());
-        customerForm.setUserId(customer.getUser().getId());
-        customerForm.setUserName(customer.getUser().getUsername());
-        customerForm.setUserVersion(customer.getUser().getVersion());
+        CustomerForm customerForm = customerFormToCustomer.convertFromDao(customer);
         model.addAttribute("customer", customerForm);
 
         return "/customer/customerform";
